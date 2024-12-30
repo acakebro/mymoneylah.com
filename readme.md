@@ -8,6 +8,7 @@ streamlit run app.py
 
 ### Updates
 - [x] Base functionality
+- [ ] test db.py for each page and their respective database
 - [ ] https://github.com/octo-org/octo-repo/issues/740
 - [ ] Add delight to the experience when all tasks are complete :tada:
 - [ ] travel.py will be included in future updates, to keep track of your travel budgeting
