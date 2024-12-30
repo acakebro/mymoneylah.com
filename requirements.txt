@@ -1,0 +1,6 @@
+streamlit
+streamlit-authenticator
+sqlalchemy
+psycopg2
+bcrypt
+os
