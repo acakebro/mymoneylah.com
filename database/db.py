@@ -59,24 +59,74 @@ def get_user(username, password):
         return {"id": row[0], "username": row[1], "password": row[2]}
     return None
 
-# Create new function for each DB in other pages
+## Create new function for each DB in other pages
+
 # Function to create the 'cashflow' table
 def create_cashflow_table():
     conn = create_connection()
     cursor = conn.cursor()
+
+# First, drop the table if it exists
+    # cursor.execute("DROP TABLE IF EXISTS cashflow")
+
     cursor.execute('''
     CREATE TABLE IF NOT EXISTS cashflow (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
         user_id INTEGER,
         date TEXT,
         amount REAL,
-        category TEXT,
         description TEXT,
-        FOREIGN KEY (user_id) REFERENCES users (id)
+        type TEXT,
+        FOREIGN KEY(user_id) REFERENCES users(id)
     )
     ''')
+
     conn.commit()
     conn.close()
+
+# Function to insert cashflow data
+def insert_cashflow_data(user_id, date, amount, description, cashflow_type):
+    conn = create_connection()
+    cursor = conn.cursor()
+
+    cursor.execute("INSERT INTO cashflow (user_id, date, amount, description, type) VALUES (?, ?, ?, ?, ?)",
+                   (user_id, date, amount, description, cashflow_type))
+
+    conn.commit()
+    conn.close()
+
+# Function to get the most recent entries for cashflow
+def get_cashflow_data(user_id, start_date, end_date, transaction_type, num_entries):
+    conn = create_connection()
+    cursor = conn.cursor()
+
+    # Build dynamic query based on filters
+    query = "SELECT * FROM cashflow WHERE user_id = ? AND date BETWEEN ? AND ?"
+    params = [user_id, start_date, end_date]
+
+    # Add transaction type filter
+    if transaction_type != "All":
+        query += " AND type = ?"
+        params.append(transaction_type)
+
+    # Limit the number of entries
+    query += " ORDER BY date DESC LIMIT ?"
+    params.append(num_entries)
+
+    cursor.execute(query, tuple(params))
+    cashflow_data = cursor.fetchall()
+
+    conn.close()
+    return cashflow_data
+
+# Function to delete  for cashflow
+def delete_cashflow_entry(entry_id):
+    conn = create_connection()
+    cursor = conn.cursor()
+    cursor.execute("DELETE FROM cashflow WHERE id = ?", (entry_id,))
+    conn.commit()
+    conn.close()
+
 
 # Function to create the 'portfolio' table
 def create_portfolio_table():

@@ -1,5 +1,5 @@
 import streamlit as st
-from database.db import get_user, register_user, create_user_table
+from database.db import get_user, register_user, create_user_table, create_cashflow_table
 
 # Ensure the table is created when the app runs
 create_user_table()

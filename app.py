@@ -11,7 +11,11 @@ st.set_page_config(
     page_title="MyMoneyLah",
     layout="wide",
 )
-
+counter = 0
+# intialise databases
+create_cashflow_table()
+create_portfolio_table()
+create_networth_table()
 
 # Main logic for checking if the user is logged in
 def main():
