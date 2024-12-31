@@ -2,6 +2,7 @@ import streamlit as st
 from database.db import insert_cashflow_data, get_cashflow_data, delete_cashflow_entry
 import datetime
 import pandas as pd
+from st_aggrid import AgGrid, GridOptionsBuilder
 
 def app():
     st.title("Cashflow Tracker")
@@ -42,18 +43,15 @@ def app():
     user_id = st.session_state["user"]["id"]
     cashflow_data = get_cashflow_data(user_id, start_date, end_date, transaction_type_filter, num_entries)
 
-    # Display the filtered cashflow data
-    # if cashflow_data:
-    #     # Convert data to pandas DataFrame
-    #     df = pd.DataFrame(cashflow_data, columns=["ID", "User ID", "Date", "Amount", "Description", "Type"])
-        
-    #     # Display as an interactive table
-    #     st.dataframe(df)  # Use st.table(df) for static table
     if cashflow_data:
         st.subheader("Your Recent Cashflow Data")
         
         # Convert data to pandas DataFrame
         df = pd.DataFrame(cashflow_data, columns=["ID", "User ID", "Date", "Amount", "Description", "Type"])
+
+        # Remove default index by resetting it
+        df = df.reset_index(drop=True)
+
         # Add Delete Buttons to Each Row
         for index, row in df.iterrows():
             col1, col2 = st.columns([3, 1])
@@ -75,6 +73,7 @@ def app():
         st.metric(label="Total Outflows", value=f"${outflow_sum:,.2f}")
         st.metric(label="Net Gain/Loss", value=f"${net_output:,.2f}")
         
+
         # Display as an interactive table
         st.dataframe(df)  # Use st.table(df) for static table
     else:
