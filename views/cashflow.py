@@ -52,17 +52,17 @@ def app():
         # Remove default index by resetting it
         df = df.reset_index(drop=True)
 
-        # Add Delete Buttons to Each Row
-        for index, row in df.iterrows():
-            col1, col2 = st.columns([3, 1])
-            with col1:
-                st.write(f"**{row['Description']}**: ${row['Amount']} on {row['Date']} ({row['Type']})")
-            with col2:
-                if st.button(f"Delete", key=f"delete_{row['ID']}"):
-                    # Call delete function to remove entry from database
-                    delete_cashflow_entry(row["ID"])
-                    st.success("Entry deleted successfully!")
-                    st.rerun()  # Refresh the page to show updated table        
+        # # Add Delete Buttons to Each Row
+        # for index, row in df.iterrows():
+        #     col1, col2 = st.columns([3, 1])
+        #     with col1:
+        #         st.write(f"**{row['Description']}**: ${row['Amount']} on {row['Date']} ({row['Type']})")
+        #     with col2:
+        #         if st.button(f"Delete", key=f"delete_{row['ID']}"):
+        #             # Call delete function to remove entry from database
+        #             delete_cashflow_entry(row["ID"])
+        #             st.success("Entry deleted successfully!")
+        #             st.rerun()  # Refresh the page to show updated table        
         # Calculate net output (gain/loss)
         inflow_sum = df[df["Type"] == "Inflow"]["Amount"].sum()
         outflow_sum = df[df["Type"] == "Outflow"]["Amount"].sum()
@@ -74,7 +74,38 @@ def app():
         st.metric(label="Net Gain/Loss", value=f"${net_output:,.2f}")
         
 
-        # Display as an interactive table
-        st.dataframe(df)  # Use st.table(df) for static table
+        # # Display as an interactive table
+        # st.dataframe(df)  # Use st.table(df) for static table
+
+
+        # Configure AgGrid to display the data without the default index
+        gb = GridOptionsBuilder.from_dataframe(df)
+        gb.configure_pagination(paginationAutoPageSize=True)  # Enable pagination
+        gb.configure_selection("single")  # Allow selecting a single row
+        gb.configure_column("ID", hide=True)  # Optionally hide the ID column
+        gb.configure_column("User ID", hide=True)  # Optionally hide User ID
+        grid_options = gb.build()
+
+        # Display the table using AgGrid
+        grid_response = AgGrid(
+            df,
+            gridOptions=grid_options,
+            height=400,
+            update_mode="MODEL_CHANGED",
+            fit_columns_on_grid_load=True,
+        )
+
+        # # Handle row selection and deletion
+        # selected_row = grid_response.get("selected_rows",[])
+        # print(len(selected_row))
+        # if len(selected_row) > 0:
+        #     print("selected")
+        #     selected_id = selected_row[0]["ID"]
+        #     if st.button("Delete Selected Entry"):
+        #         delete_cashflow_entry(selected_id)
+        #         st.success("Entry deleted successfully!")
+        #         st.rerun()  # Refresh the page to show updated table
+        # else:
+        #     st.write("No row was selected")
     else:
         st.write("No cashflow data available matching the filters.")
