@@ -3,6 +3,7 @@ from database.db import insert_cashflow_data, get_cashflow_data, delete_cashflow
 import datetime
 import pandas as pd
 from st_aggrid import AgGrid, GridOptionsBuilder
+import views.shared_data
 
 def app():
     st.title("Cashflow Tracker")
@@ -93,6 +94,8 @@ def app():
         st.metric(label="Total Outflows", value=f"${outflow_sum:,.2f}")
         st.metric(label="Net Gain/Loss", value=f"${net_output:,.2f}")
         
+        # Update the shared data page
+        views.shared_data.update_cashflow_data(inflow_sum,outflow_sum,net_output)
 
         # # Display as an interactive table
         # st.dataframe(df)  # Use st.table(df) for static table

@@ -9,8 +9,10 @@ def app():
 
     # Display data from each page
     st.subheader("Cashflow Overview")
-    st.write(f"Monthly Income: ${data['Cashflow']['income']}")
-    st.write(f"Monthly Expenses: ${data['Cashflow']['expenses']}")
+    st.write(f"Total Inflows: ${data['Cashflow']['Total Inflows']}")
+    st.write(f"Total Outflows: ${data['Cashflow']['Total Outflows']}")
+    st.write(f"Net Gain/Loss: ${data['Cashflow']['Net Gain/Loss']}")
+
 
     st.subheader("Portfolio Overview")
     st.write(f"Portfolio Value: ${data['Portfolio']['value']}")
