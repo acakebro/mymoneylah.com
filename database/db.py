@@ -174,5 +174,24 @@ def create_networth_table():
     conn.commit()
     conn.close()
 
+# Function to create the 'cashflow' table
+def create_financial_goals_table():
+    conn = create_connection()
+    cursor = conn.cursor()
 
+    cursor.execute('''
+    CREATE TABLE IF NOT EXISTS financial_goals (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        user_id INTEGER,
+        financial_goal TEXT,
+        goal_amount REAL,
+        date_achieved TEXT,
+        amount_to_save REAL,
+        frequency TEXT,
+        FOREIGN KEY(user_id) REFERENCES users(id)
+    )
+    ''')
+
+    conn.commit()
+    conn.close()
 

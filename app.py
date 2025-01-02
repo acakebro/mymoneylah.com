@@ -5,7 +5,7 @@ from views.cashflow import app as cashflow_app
 from views.portfolio import app as portfolio_app
 from views.networth import app as networth_app
 from views.financialgoals import app as financialgoals_app
-from database.db import create_cashflow_table, create_portfolio_table,create_networth_table
+from database.db import create_cashflow_table, create_portfolio_table,create_networth_table, create_financial_goals_table
 
 st.set_page_config(
     page_title="MyMoneyLah",
@@ -16,6 +16,7 @@ counter = 0
 create_cashflow_table()
 create_portfolio_table()
 create_networth_table()
+create_financial_goals_table()
 
 # Main logic for checking if the user is logged in
 def main():
