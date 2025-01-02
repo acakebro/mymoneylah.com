@@ -101,7 +101,7 @@ def get_cashflow_data(user_id, start_date, end_date, transaction_type, num_entri
     cursor = conn.cursor()
 
     # Build dynamic query based on filters
-    query = "SELECT * FROM cashflow WHERE user_id = ? AND date BETWEEN ? AND ?"
+    query = "SELECT * FROM cashflow WHERE user_id = ? AND date BETWEEN ? AND ? "
     params = [user_id, start_date, end_date]
 
     # Add transaction type filter
@@ -110,7 +110,7 @@ def get_cashflow_data(user_id, start_date, end_date, transaction_type, num_entri
         params.append(transaction_type)
 
     # Limit the number of entries
-    query += " ORDER BY date DESC LIMIT ?"
+    query += " ORDER BY date DESC, id DESC LIMIT ?"
     params.append(num_entries)
 
     cursor.execute(query, tuple(params))
@@ -127,6 +127,18 @@ def delete_cashflow_entry(entry_id):
     conn.commit()
     conn.close()
 
+# Function to query the latest entry
+def get_last_cashflow_update_entry(user_id):
+    # Example SQL query (adjust based on your database schema)
+    conn = create_connection()
+    cursor = conn.cursor()
+    cursor.execute("SELECT MAX(date) FROM cashflow WHERE user_id = ?", (user_id,))
+    row = cursor.fetchone() # fetches the top row
+    conn.close()
+    if row:
+        # Map the tuple to a dictionary
+        # return {"id": row[0], "username": row[1], "password": row[2]}
+        return row
 
 # Function to create the 'portfolio' table
 def create_portfolio_table():

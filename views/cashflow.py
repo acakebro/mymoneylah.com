@@ -1,11 +1,15 @@
 import streamlit as st
-from database.db import insert_cashflow_data, get_cashflow_data, delete_cashflow_entry
+from database.db import insert_cashflow_data, get_cashflow_data, delete_cashflow_entry, get_last_cashflow_update_entry
 import datetime
 import pandas as pd
 from st_aggrid import AgGrid, GridOptionsBuilder
 
 def app():
     st.title("Cashflow Tracker")
+
+    # Initialize a session state flag for success message
+    if "success_message" not in st.session_state:
+        st.session_state.success_message = None
 
     # Input fields for cashflow
     date = st.date_input("Date", datetime.date.today())
@@ -14,7 +18,6 @@ def app():
 
     # Dropdown for cashflow type
     cashflow_type = st.radio("Transaction Type", ("Inflow", "Outflow"))
-
     # Submit data
     if st.button("Submit"):
         if date and amount and description and cashflow_type:
@@ -22,11 +25,19 @@ def app():
             user_id = st.session_state["user"]["id"]
             # Insert cashflow data into the database with type (inflow or outflow)
             insert_cashflow_data(user_id, date, amount, description, cashflow_type)
-            st.success(f"{cashflow_type} added successfully!")
-            st.rerun() # Trigger a refresh to show the newly addd data 
+            # Set success message in session state
+            st.session_state.success_message = f"{cashflow_type} added successfully! ✅"
+            # Refresh the page to show updated data
+            st.rerun() # Trigger a refresh to show the newly add data 
         else:
             st.error("Please fill out all fields.")
     
+    # Display the success message if available
+    if st.session_state.success_message:
+        st.success(st.session_state.success_message)
+        # Clear the message after displaying it
+        st.session_state.success_message = None
+
     # Filters Section: Allow user to filter by date range, transaction type, and number of records
     st.subheader("Filter Your Cashflow Data")
 
@@ -43,9 +54,18 @@ def app():
     user_id = st.session_state["user"]["id"]
     cashflow_data = get_cashflow_data(user_id, start_date, end_date, transaction_type_filter, num_entries)
 
+    # Fetch last update timestamp
+    last_update = get_last_cashflow_update_entry(user_id)
+
+    if last_update:
+        st.info(f"Last Updated: {last_update[0]}")
+        # st.info(f"Last Updated: {last_update.strftime('%Y-%m-%d %H:%M:%S')}")
+    else:
+        st.info("No entries found.")
+
     if cashflow_data:
         st.subheader("Your Recent Cashflow Data")
-        
+
         # Convert data to pandas DataFrame
         df = pd.DataFrame(cashflow_data, columns=["ID", "User ID", "Date", "Amount", "Description", "Type"])
 
