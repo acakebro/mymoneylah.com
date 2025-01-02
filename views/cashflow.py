@@ -102,10 +102,17 @@ def app():
         gb = GridOptionsBuilder.from_dataframe(df)
         gb.configure_pagination(paginationAutoPageSize=True)  # Enable pagination
         gb.configure_selection("single")  # Allow selecting a single row
+        gb.configure_default_column(
+            flex = 1, # make all columns share equal space
+            cellStyle = {"textAlign": "center"}, # Center-align all columns
+            wrapText = True, # Optional: Wrap text in cells if needed
+            # headerStyle={"textAlign": "center"} # Center-align the column headers
+        )
+
         gb.configure_column("ID", hide=True)  # Optionally hide the ID column
         gb.configure_column("User ID", hide=True)  # Optionally hide User ID
         grid_options = gb.build()
-
+        
         # Display the table using AgGrid
         grid_response = AgGrid(
             df,
