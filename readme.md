@@ -27,6 +27,8 @@ streamlit run app.py
 
 ---
 
+#### Miscellaneous
+
 - [ ] test db.py for each page and their respective database :tada:
 - [ ] travel.py will be included in future updates, to keep track of your travel budgeting
   - [ ] splitwise functionalities
